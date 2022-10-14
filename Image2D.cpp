@@ -3,22 +3,8 @@
 using namespace std;
 
 //CONSTRUCTEURS
-Image2D::Image2D(){
-
-    int width = 128;
-    int height = 128;
-    int size=width*height;
-    int image_blanche[size][size]; // allocate 3 bytes per pixel
-
-    for (int i=0; i<width; i++) {
-        for (int j=0; j<width; j++) {
-                (*this).ptr[i][j]=0;
-        }
-    }
-}
+Image2D::Image2D():Image2D(128, 128, 255, 1, 1, 0){}
 Image2D::Image2D(int nx, int ny, int ngl, double milx, double mily, int p0){
-
-
 
     int width = nx;
     int height = ny;
@@ -104,6 +90,12 @@ Image2D::Image2D(char* path,double milx, double mily){
     imageRED=NULL;
     delete [] imageGRE;
     imageGRE=NULL;
+}
+
+//DECONSTRUCTEUR
+Image2D::~Image2D()
+{
+    (*this).libere_partie_dynamique();
 }
 
 //GETTER SETTER
@@ -194,25 +186,59 @@ void Image2D::init(int valeur_init){
                 (*this).ptr[i][j]=valeur_init;
             }
         }
+    }
+}
 
+//ENREGISTRER IMAGE
+void Image2D::Enregistrer_image(char* filename){
+    unsigned char* image_and_en_tete_to_save = new unsigned char[(*this).size*3+54];
+    for(int iD=0;iD<54;iD++)//the first 54 bytes
+    {
+        image_and_en_tete_to_save[iD]=(*this).entete[iD];
     }
 
+    for (int i=0; i<nbx; i++) {
+        for (int j=0; j<nby; j++) {
+           // printf("%x %d %d\n",(this).getPixelValue(i,j), i,j);
+            image_and_en_tete_to_save[54+(i*((*this).getNby())+j)*3]=(unsigned char)(*this).getPixelValue(i,j);
+            image_and_en_tete_to_save[54+1+(i*((*this).getNby())+j)*3]=(unsigned char)(*this).getPixelValue(i,j);
+            image_and_en_tete_to_save[54+2+(i*((*this).getNby())+j)*3]=(unsigned char)(*this).getPixelValue(i,j);
+        }
+    }
 
+    FILE* fp=fopen(filename,"wb");
+    fwrite(image_and_en_tete_to_save,sizeof(char),(54+(*this).getSize()*3),fp);// fonction to write binary
+    //Closure
+    fclose(fp);
 }
 
 //SURCHARGES DES OPERATEURS
-Image2D &Image2D::operator+(const Image2D &source){
-
+Image2D Image2D::operator+(const Image2D &source){
+    Image2D dest;
+    for (int i = 0; i < nbx; i++){
+        for (int j = 0; j < nby; j++){
+            dest.ptr[i][j]=(*this).ptr[i][j]+source.ptr[i][j];
+        }
+    }
+    return dest;
 }
-Image2D &Image2D::operator-(const Image2D &source){
-
+Image2D Image2D::operator-(const Image2D &source){
+    Image2D dest;
+    for (int i = 0; i < nbx; i++){
+        for (int j = 0; j < nby; j++){
+            dest.ptr[i][j]=(*this).ptr[i][j]-source.ptr[i][j];
+        }
+    }
+    return dest;
 }
-Image2D &Image2D::operator==(const Image2D &source){
-
+Image2D Image2D::operator=(const Image2D &source){
+    Image2D dest;
+    for (int i = 0; i < nbx; i++){
+        for (int j = 0; j < nby; j++){
+            dest.ptr[i][j]=source.ptr[i][j];
+        }
+    }
+    return dest;
 }
 
-//DECONSTRUCTEUR
-Image2D::~Image2D()
-{
-    (*this).libere_partie_dynamique();
-}
+
