@@ -207,9 +207,7 @@ void Image2D::Enregistrer_image(char* filename){
     }
 
     FILE* fp=fopen(filename,"wb");
-
     fwrite(image_and_en_tete_to_save,sizeof(char),(54+(*this).getSize()*3),fp);// fonction to write binary
-    
     //Closure
     fclose(fp);
 }
