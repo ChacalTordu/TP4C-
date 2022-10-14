@@ -37,12 +37,12 @@ public:
 
     int getPixelValue(int i,int j);
     void setPixelValue(int i,int j, int a);
-    void enregistreImage(char* path);
+    void Enregistrer_image(char* filename);
 
     // Les opérateurs de base:
-    Image2D &operator+(const Image2D &);
-    Image2D &operator-(const Image2D &);
-    Image2D &operator==(const Image2D &);
+    Image2D operator+(const Image2D &);
+    Image2D operator-(const Image2D &);
+    Image2D operator=(const Image2D &);
 
 protected:
     int** ptr;//. Tels que ptr[i] représente un pointeur sur les valeurs des pixels de la ligne i et ptr[i][j] représente la valeur du pixel i,j.
@@ -59,6 +59,7 @@ private:
     long int size;/////nombre total de pixels dans l'image.
     double dx;/////taille d'un pixel en millimètres sur l'axe x.
     double dy;/////taille d'un pixel en millimètres sur l'axe y.
+    unsigned char entete[54];////ENTET DE L'IMAGE
 
 };
 
